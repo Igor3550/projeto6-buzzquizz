@@ -29,3 +29,37 @@ function showQuizzesOnScreen(answer) {
 function isImage(url) {
   return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
 }
+function templateForQuestionsQuizz(){
+  `<div class="question">
+  <div>
+    <h2>Em que animal olho-tonto Moody transfigurou Malfoy ?</h2>
+  </div>
+  <div class="answers">
+    <div>
+      <img src="./imgs/spider-man.png">
+      <p>Gatíneo</p>
+    </div>
+    <div>
+      <img src="./imgs/spider-man.png">
+      <p>Gatíneo</p>
+    </div>
+    <div>
+      <img src="./imgs/spider-man.png">
+      <p>Gatíneo</p>
+    </div>
+    <div>
+      <img src="./imgs/spider-man.png">
+      <p>Gatíneo</p>
+    </div>
+  </div>
+</div>`
+}
+function templeteTopScreenQuizzes(){
+  `<div class="img-quizz">
+  <img src="./imgs/spider-man.png">
+  <p>O quão Potterhead é você ?</p>
+  </div>`
+}
+function showScreenOfQuestions(){
+  let firstQuizz = quizzesOfServer[0];
+}
