@@ -8,7 +8,7 @@ function clearMainTag(){
 }
 loadQuizzes();
 function loadQuizzes() {
-    const promise = axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes');
+    const promise = axios.get('https://mock-api.driven.com.br/api/v7/buzzquizz/quizzes');
     promise.then(showQuizzesOnScreen);
 }
 function showQuizzesOnScreen(answer) {
@@ -96,5 +96,14 @@ function shuffleAnswersOfEachQuestion(){
     for (let j = 0 ; j < quizzesOfServer[i].questions.length ; j++) {
       quizzesOfServer[i].questions[j].answers.sort(comparador);
     }
+  }
+}
+function selectAnswer(e){
+  const answer = e.parentNode;
+  const boxAnswers = answer.querySelectorAll('.box-answer');
+  for (let i = 0 ; i < boxAnswers.length ; i++) {
+      if (boxAnswers[i] !== e) {
+        boxAnswers[i].classList.add('backGroundWhite');
+      }
   }
 }

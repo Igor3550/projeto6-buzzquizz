@@ -10,7 +10,7 @@ function templateForQuestionsQuizz(e){
       for (let j = 0 ; j < e.questions[i].answers.length ; j++) {
         if (j === e.questions[i].answers.length - 1) {
           result += `
-          <div>
+          <div onclick="selectAnswer(this)" class="box-answer">
           <img src=${e.questions[i].answers[j].image}>
           <p>${e.questions[i].answers[j].text}</p>
         </div>
@@ -18,7 +18,7 @@ function templateForQuestionsQuizz(e){
       </div>`
       } else {
         result += `
-        <div>
+        <div onclick="selectAnswer(this)" class="box-answer">
           <img src=${e.questions[i].answers[j].image}>
           <p>${e.questions[i].answers[j].text}</p>
       </div>`
