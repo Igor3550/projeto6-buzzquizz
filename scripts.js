@@ -99,11 +99,13 @@ function shuffleAnswersOfEachQuestion(){
   }
 }
 function selectAnswer(e){
-  const answer = e.parentNode;
-  const boxAnswers = answer.querySelectorAll('.box-answer');
-  for (let i = 0 ; i < boxAnswers.length ; i++) {
-      if (boxAnswers[i] !== e) {
-        boxAnswers[i].classList.add('backGroundWhite');
-      }
+  if (e.classList.contains('backGroundWhite') === false) {
+    const answer = e.parentNode;
+    const boxAnswers = answer.querySelectorAll('.box-answer');
+    for (let i = 0 ; i < boxAnswers.length ; i++) {
+        if (boxAnswers[i] !== e) {
+          boxAnswers[i].classList.add('backGroundWhite');
+        }
+    }
   }
 }
