@@ -25,6 +25,7 @@ function showQuizzesOnScreen(answer) {
       quizzesOfServer.push(data[i]);
       }
     }
+    shuffleAnswersOfEachQuestion();
 }
 function isImage(url) {
   return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
@@ -84,6 +85,16 @@ function verifyBasicInfo(){
 function playQuizz(position){
   clearMainTag();
   console.log(quizzesOfServer[position]);
-  main.innerHTML += templeteTopScreenQuizzes(quizzesOfServer[position]);
+  main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
   main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
+}
+function comparador() { 
+	return Math.random() - 0.5; 
+}
+function shuffleAnswersOfEachQuestion(){
+  for (let i = 0 ; i < quizzesOfServer.length ; i++) {
+    for (let j = 0 ; j < quizzesOfServer[i].questions.length ; j++) {
+      quizzesOfServer[i].questions[j].answers.sort(comparador);
+    }
+  }
 }
