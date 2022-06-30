@@ -14,10 +14,9 @@ function loadQuizzes() {
 function showQuizzesOnScreen(answer) {
     let quizzes = document.querySelector('.quizzes');
     let data = answer.data;
-    console.log(data)
-    for (let i = 0 ; i < 10 ; i++) {
+    for (let i = 0 ; i < data.length ; i++) {
       if (isImage(data[i].image) === true) {
-        quizzes.innerHTML += `<div class="quizz">
+        quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${i})">
         <img src=${data[i].image}>
         <div class="title">
           <p>${data[i].title}</p>
@@ -26,42 +25,11 @@ function showQuizzesOnScreen(answer) {
       quizzesOfServer.push(data[i]);
       }
     }
-    console.log(quizzesOfServer);
 }
 function isImage(url) {
   return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
 }
-function templateForQuestionsQuizz(){
-  `<div class="question">
-  <div>
-    <h2>Em que animal olho-tonto Moody transfigurou Malfoy ?</h2>
-  </div>
-  <div class="answers">
-    <div>
-      <img src="./imgs/spider-man.png">
-      <p>Gatíneo</p>
-    </div>
-    <div>
-      <img src="./imgs/spider-man.png">
-      <p>Gatíneo</p>
-    </div>
-    <div>
-      <img src="./imgs/spider-man.png">
-      <p>Gatíneo</p>
-    </div>
-    <div>
-      <img src="./imgs/spider-man.png">
-      <p>Gatíneo</p>
-    </div>
-  </div>
-</div>`
-}
-function templeteTopScreenQuizzes(){
-  `<div class="img-quizz">
-  <img src="./imgs/spider-man.png">
-  <p>O quão Potterhead é você ?</p>
-  </div>`
-}
+
 function showScreenOfQuestions(){
   let firstQuizz = quizzesOfServer[0];
 }
@@ -112,4 +80,10 @@ function verifyBasicInfo(){
     }
 
     console.log(elementsValue);
+}
+function playQuizz(position){
+  clearMainTag();
+  console.log(quizzesOfServer[position]);
+  main.innerHTML += templeteTopScreenQuizzes(quizzesOfServer[position]);
+  main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
 }
