@@ -219,6 +219,15 @@ main{
 .button-proximo-form:hover {
     cursor: pointer;
 }
+.correctAnswer{
+    color: #4F9D25;
+}
+.wrongAnswer{
+    color: #F04732;
+}
+.textBlack{
+    color: black;
+}
 
 @media (max-width: 1100px) {
     main{
@@ -300,5 +309,5 @@ main{
 }
 /* --A classe abaixo deve ser utilizada quando o usuário escolher uma resposta durante o quizz. Assim, todas as opções não escolhidas devem possuir a classe abaixo, assim como o layout */
 .backGroundWhite{
-    background-color: rgba(255, 255, 255, .7);
+    background-color: rgba(255, 255, 255, .5);
 }

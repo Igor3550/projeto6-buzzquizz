@@ -106,6 +106,7 @@ function selectAnswer(e){
         if (boxAnswers[i] !== e) {
           boxAnswers[i].classList.add('backGroundWhite');
         }
+        boxAnswers[i].classList.remove('textBlack');
     }
   }
 }
