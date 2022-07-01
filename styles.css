@@ -366,6 +366,9 @@ main{
     }
 }
 @media (max-width: 360px) {
+    .img-quizz p{
+        font-size: 18px;
+    }
     .quizz{
         width: 100%;
     }

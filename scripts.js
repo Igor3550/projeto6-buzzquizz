@@ -13,16 +13,18 @@ function loadQuizzes() {
     promise.then(showQuizzesOnScreen);
 }
 function showQuizzesOnScreen(answer) {
+    let j = 0;
     let quizzes = document.querySelector('.quizzes');
     let data = answer.data;
     for (let i = 0 ; i < data.length ; i++) {
       if (isImage(data[i].image) === true) {
-        quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${i})">
+        quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${j})">
         <img src=${data[i].image}>
         <div class="title">
           <p>${data[i].title}</p>
         </div>
       </div>`
+      j++;
       quizzesOfServer.push(data[i]);
       }
     }
@@ -250,6 +252,7 @@ function playQuizz(position){
   main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
   quizz = quizzesOfServer[position];
   console.log(quizz.levels);
+  document.querySelector('.img-quizz').scrollIntoView({block: 'center'});
 }
 function comparador() { 
 	return Math.random() - 0.5; 
@@ -277,7 +280,7 @@ function selectAnswer(e){
   }
   verifyPontuationQuizz(e);
   setTimeout( () => {
-    e.parentNode.parentNode.nextElementSibling.scrollIntoView();
+    e.parentNode.parentNode.nextElementSibling.scrollIntoView({behavior: 'smooth', block: 'center'});
   }, 2000);
 }
 function verifyPontuationQuizz(e) {
@@ -291,7 +294,8 @@ function verifyPontuationQuizz(e) {
     main.innerHTML += ResultQuizz(quizz);
     main.innerHTML += buttons();
     setTimeout( () => {
-      document.querySelector('.result-Quizz').scrollIntoView();
+      document.querySelector('.result-Quizz').scrollIntoView({behavior: 'smooth'});
     }, 2000);
+    quizz = undefined;
   }
 }
