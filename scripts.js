@@ -243,11 +243,13 @@ function verifyQuestionsInfo(){
         showCreatePageFase3();
     }
 }
+let quizz;
 function playQuizz(position){
   clearMainTag();
-  console.log(quizzesOfServer[position]);
   main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
   main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
+  quizz = quizzesOfServer[position];
+  console.log(quizz.levels);
 }
 function comparador() { 
 	return Math.random() - 0.5; 
@@ -260,6 +262,8 @@ function shuffleAnswersOfEachQuestion(){
     }
   }
 }
+let pontuation = 0;
+let count = 0;
 function selectAnswer(e){
   if (e.classList.contains('backGroundWhite') === false) {
     const answer = e.parentNode;
@@ -271,7 +275,23 @@ function selectAnswer(e){
         boxAnswers[i].classList.remove('textBlack');
     }
   }
+  verifyPontuationQuizz(e);
   setTimeout( () => {
-    e.parentNode.parentNode.nextElementSibling.querySelector('h2').scrollIntoView();
+    e.parentNode.parentNode.nextElementSibling.scrollIntoView();
   }, 2000);
+}
+function verifyPontuationQuizz(e) {
+  const numberOfQuestions = document.querySelectorAll('.question').length;
+  count++;
+  if (e.classList.contains('correctAnswer')) {
+    pontuation++;
+  } if (count === numberOfQuestions) {
+    pontuation = Math.floor(pontuation/numberOfQuestions * 100);
+    console.log(pontuation);
+    main.innerHTML += ResultQuizz(quizz);
+    main.innerHTML += buttons();
+    setTimeout( () => {
+      document.querySelector('.result-Quizz').scrollIntoView();
+    }, 2000);
+  }
 }

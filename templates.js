@@ -71,3 +71,36 @@ function templateTopScreenQuizzes(e){
 //     </div>
 //   </div>
 // </div>`
+
+function ResultQuizz(e) {
+  let result;
+  for (let i = 0 ; i < e.levels.length ; i++) {
+    if ( pontuation <= e.levels[i].minValue) {
+      result = `
+      <div class="result-Quizz">
+        <h2>${pontuation}% de acerto: ${e.levels[i].title}</h2>
+        <div>
+          <img src=${e.levels[i].image}>
+          <p>${e.levels[i].text}</p>
+        </div>
+      </div>`;
+      return result;
+    } else if (i === e.levels.length - 1) {
+      return `
+      <div class="result-Quizz">
+        <h2>${pontuation}% de acerto: ${e.levels[e.levels.length-1].title}</h2>
+        <div>
+          <img src=${e.levels[e.levels.length-1].image}>
+          <p>${e.levels[e.levels.length-1].text}</p>
+        </div>
+      </div>`;
+    }
+  }
+}
+function buttons() {
+  return `
+  <div class="buttons">
+    <div class="restart-Quizz">Reiniciar Quizz</div>
+    <div class="back-to-home">Voltar pra Home</div>
+  </div>`
+}
