@@ -1,8 +1,10 @@
 const main = document.querySelector('main');
 let quizzesOfServer = [];
 
-let basicQuizzInfo; // {title, imageUrl, qntQuestions, qntLevels}
+let basicQuizzInfo;
+basicQuizzInfo = {title:"abobra", qntLevels:2} // {title, imageUrl, qntQuestions, qntLevels}
 let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
+let quizzLevels;
 
 function clearMainTag(){
     main.innerHTML = '';
@@ -35,20 +37,10 @@ function isImage(url) {
 function showScreenOfQuestions(){
   let firstQuizz = quizzesOfServer[0];
 }
+
 function showCreatePage() {
     clearMainTag();
-    main.innerHTML = `
-    <div class="create-quizz-page">
-        <h1>Comece pelo começo</h1>
-        <div class="form">
-            <input class="quizz-title" type="text" placeholder="Título do seu quizz">
-            <input class="image-url" type="text" placeholder="URL da imagem do seu quizz">
-            <input class="qnt-questions" type="number" placeholder="Quantidade de perguntas do quizz">
-            <input class="qnt-levels" type="number" placeholder="Quantidade de níveis do quizz">
-        </div>
-        <div class="button-proximo-form" onclick="verifyBasicInfo()">Prosseguir para criar perguntas</div>
-    </div>
-    `
+    main.innerHTML = templateCreateQuizzFase1();
 }
 
 function showCreatePageFase2() {
@@ -63,33 +55,7 @@ function showCreatePageFase2() {
     const form = main.querySelector('.area-form')
 
     for(let i=0; i<basicQuizzInfo.qntQuestions; i++){
-        form.innerHTML += `
-        <div class="form question${i+1}">
-        
-            <h2  onclick="showQuestionsForm(this)">Pergunta ${i+1} <ion-icon name="create-outline"></ion-icon></h2>
-            <div class="question-display hide">
-                <input class="question-text" type="text" placeholder="Texto da pergunta">
-                <input class="background-question" type="text" placeholder="Cor de fundo da pergunta">
-                <h2>Resposta correta</h2>
-                <input class="correct-resp" type="text" placeholder="Resposta correta">
-                <input class="image-url" type="text" placeholder="URL da imagem">
-                <h2>Respostas incorretas</h2>
-                <div class="incorrect-resp">
-                    <input class="incorrect-resp1" type="text" placeholder="Resposta incorreta 1">
-                    <input class="image-url1" type="text" placeholder="URL da imagem 1">
-                </div>
-                <div class="incorrect-resp">
-                    <input class="incorrect-resp2" type="text" placeholder="Resposta incorreta 2">
-                    <input class="image-url2" type="text" placeholder="URL da imagem 2">   
-                </div>
-                <div class="incorrect-resp">
-                    <input class="incorrect-resp3" type="text" placeholder="Resposta incorreta 3">
-                    <input class="image-url3" type="text" placeholder="URL da imagem 3">
-                </div>
-            </div>
-        </div>
-
-        `
+        form.innerHTML += templateCreateQuizzFase2(i+1)
     }
 }
 
@@ -99,9 +65,86 @@ function showCreatePageFase3(){
         <h1>Agora decida os níveis</h1>
 
         <div class="area-form"></div>
-        <div class="button-proximo-form" onclick="">Finalizar quizz</div>
+        <div class="button-proximo-form" onclick="verifyLevelsInfo()">Finalizar quizz</div>
     </div>
     `
+
+    const form = main.querySelector('.area-form')
+
+    for(let i=0; i<basicQuizzInfo.qntLevels; i++){
+        form.innerHTML += templateCreateQuizzFase3(i+1)
+    }
+}
+
+function showCreatePageFase4() {
+    clearMainTag();
+    main.innerHTML = `
+    <div class="create-quizz-page">
+        <h1>Seu quizz está pronto</h1>
+
+        <div class="button-proximo-form" onclick="">Acessar quizz</div>
+    </div>
+  `
+}
+
+showCreatePageFase3()
+
+function verifyLevelsInfo(){
+    'level-text, percent-min, level-url, level-description'
+
+    const levelsList = main.querySelectorAll('.form');
+
+    let levels = []
+
+    let correctVerify = true
+
+    for(let i=0; i<levelsList.length; i++){
+        let level = levelsList[i]
+
+        let levelTitle = level.querySelector('.level-text').value;
+        let levelPercent = level.querySelector('.percent-min').value;
+        let levelUrlImg = level.querySelector('.level-url').value;
+        let levelDescription = level.querySelector('.level-description').value;
+        levelPercent = Number(levelPercent)
+
+        if ( levelPercent >= 0 ) {
+            if (levelPercent > 100 ) {
+                correctVerify = false
+            }
+        }else{
+            correctVerify = false
+        }
+
+        if( levelTitle.length < 10 || !verifyUrl(levelUrlImg) || levelDescription.length < 30){
+            correctVerify = false;  
+        }
+
+        if(correctVerify) {
+            let levelObject = {
+                title: levelTitle,
+                image: levelUrlImg,
+                text: levelDescription,
+                minValue: levelPercent
+            }
+
+            levels.push(levelObject);
+        }
+    }
+
+    let level0 = false;
+    levels.map(level => {
+        let min = level.minValue;
+
+        if(min === 0){
+            level0 = true;
+        }
+    })
+    if(!level0 || !correctVerify){
+        alert("Por favor, preencha os campos corretamente!")
+    }else{
+        showCreatePageFase4()
+    }
+    
 }
 
 function showQuestionsForm(element) {
