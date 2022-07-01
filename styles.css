@@ -163,6 +163,7 @@ main{
     margin-top: 10px;
     position: relative;
     z-index: -1;
+    font-weight: bold;
 }
 
 .create-quizz-page{

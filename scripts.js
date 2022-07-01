@@ -109,4 +109,7 @@ function selectAnswer(e){
         boxAnswers[i].classList.remove('textBlack');
     }
   }
+  setTimeout( () => {
+    e.parentNode.parentNode.nextElementSibling.querySelector('h2').scrollIntoView();
+  }, 2000);
 }
