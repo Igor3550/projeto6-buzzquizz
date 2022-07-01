@@ -1,4 +1,5 @@
 const main = document.querySelector('main');
+let quizzesOfServer = [];
 
 let basicQuizzInfo; // {title, imageUrl, qntQuestions, qntLevels}
 let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
@@ -6,7 +7,34 @@ let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
 function clearMainTag(){
     main.innerHTML = '';
 }
+loadQuizzes();
+function loadQuizzes() {
+    const promise = axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes');
+    promise.then(showQuizzesOnScreen);
+}
+function showQuizzesOnScreen(answer) {
+    let quizzes = document.querySelector('.quizzes');
+    let data = answer.data;
+    for (let i = 0 ; i < data.length ; i++) {
+      if (isImage(data[i].image) === true) {
+        quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${i})">
+        <img src=${data[i].image}>
+        <div class="title">
+          <p>${data[i].title}</p>
+        </div>
+      </div>`
+      quizzesOfServer.push(data[i]);
+      }
+    }
+    shuffleAnswersOfEachQuestion();
+}
+function isImage(url) {
+  return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+}
 
+function showScreenOfQuestions(){
+  let firstQuizz = quizzesOfServer[0];
+}
 function showCreatePage() {
     clearMainTag();
     main.innerHTML = `
@@ -71,7 +99,7 @@ function showCreatePageFase3(){
         <h1>Agora decida os níveis</h1>
 
         <div class="area-form"></div>
-        <div class="button-proximo-form" onclick="verifyQuestionsInfo()">Finalizar quizz</div>
+        <div class="button-proximo-form" onclick="">Finalizar quizz</div>
     </div>
     `
 }
@@ -214,4 +242,21 @@ function verifyQuestionsInfo(){
     }else{
         showCreatePageFase3();
     }
+}
+function playQuizz(position){
+  clearMainTag();
+  console.log(quizzesOfServer[position]);
+  main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
+  main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
+}
+function comparador() { 
+	return Math.random() - 0.5; 
+}
+
+function shuffleAnswersOfEachQuestion(){
+  for (let i = 0 ; i < quizzesOfServer.length ; i++) {
+    for (let j = 0 ; j < quizzesOfServer[i].questions.length ; j++) {
+      quizzesOfServer[i].questions[j].answers.sort(comparador);
+    }
+  }
 }
