@@ -1,11 +1,13 @@
 const main = document.querySelector('main');
 let quizzesOfServer = [];
 let quizz = '';
+let quizzPosition = '';
 
 let basicQuizzInfo;// {title, imageUrl, qntQuestions, qntLevels}
 let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
 let quizzLevels;//[{L1}, {L2}]
 let createdQuizz;
+let createdQuizzId;
 
 function clearMainTag(){
     main.innerHTML = '';
@@ -197,7 +199,10 @@ function sendNewQuizz(quizz){
 
     const promise = axios.post(`${baseURL}`, quizz);
     promise.catch((error) => {console.log(error)})
-    promise.then((res) => {console.log("sucesso", res)})
+    promise.then((res) => {
+        console.log("sucesso", res)
+        createdQuizzId = res.data.id
+    })
     console.log(quizz);
 }
 
@@ -324,6 +329,7 @@ function verifyQuestionsInfo(){
 
 function playQuizz(position){
   clearMainTag();
+  quizzPosition = position;
   main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
   main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
   quizz = quizzesOfServer[position];
@@ -355,7 +361,7 @@ function selectAnswer(e){
   }
   verifyPontuationQuizz(e);
   setTimeout( () => {
-    e.parentNode.parentNode.nextElementSibling.scrollIntoView();
+    e.parentNode.parentNode.nextElementSibling.scrollIntoView({behavior: "smooth"});
   }, 2000);
 }
 
@@ -374,7 +380,18 @@ function verifyPontuationQuizz(e) {
     }
     main.innerHTML += buttons();
     setTimeout( () => {
-      document.querySelector('.result-Quizz').scrollIntoView();
+      document.querySelector('.result-Quizz').scrollIntoView({behavior: "smooth"});
     }, 2000);
   }
+}
+
+function restartQuizz(){
+    pontuation = 0;
+    count = 0;
+    main.scrollIntoView({behavior: "smooth"})
+    if(quizz === ''){
+        playCreatedQuizz(createdQuizz);
+    }else if(quizzPosition !== ''){
+        playQuizz(quizzPosition);
+    }
 }

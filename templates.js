@@ -145,6 +145,7 @@ function ResultQuizz(e) {
   let result;
   for (let i = 0 ; i < e.levels.length ; i++) {
     console.log(e.levels[i])
+    console.log(pontuation)
     if ( pontuation <= e.levels[i].minValue) {
       result = `
       <div class="result-Quizz">
@@ -170,7 +171,7 @@ function ResultQuizz(e) {
 function buttons() {
   return `
   <div class="buttons">
-    <div class="restart-Quizz">Reiniciar Quizz</div>
-    <div class="back-to-home">Voltar pra Home</div>
+    <div class="restart-Quizz" onclick="restartQuizz()">Reiniciar Quizz</div>
+    <div class="back-to-home" onclick="reloadPage()">Voltar pra Home</div>
   </div>`
 }
