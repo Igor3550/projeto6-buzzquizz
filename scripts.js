@@ -1,22 +1,24 @@
 const main = document.querySelector('main');
 let quizzesOfServer = [];
+let quizz = '';
 
-let basicQuizzInfo;
-basicQuizzInfo = {title:"abobra", qntLevels:2} // {title, imageUrl, qntQuestions, qntLevels}
+let basicQuizzInfo;// {title, imageUrl, qntQuestions, qntLevels}
 let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
-let quizzLevels;
+let quizzLevels;//[{L1}, {L2}]
+let createdQuizz;
 
 function clearMainTag(){
     main.innerHTML = '';
 }
 loadQuizzes();
 function loadQuizzes() {
-    const promise = axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes');
+    const promise = axios.get('https://mock-api.driven.com.br/api/v7/buzzquizz/quizzes');
     promise.then(showQuizzesOnScreen);
 }
 function showQuizzesOnScreen(answer) {
     let quizzes = document.querySelector('.quizzes');
     let data = answer.data;
+
     for (let i = 0 ; i < data.length ; i++) {
       if (isImage(data[i].image) === true) {
         quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${i})">
@@ -78,16 +80,31 @@ function showCreatePageFase3(){
 
 function showCreatePageFase4() {
     clearMainTag();
+
     main.innerHTML = `
     <div class="create-quizz-page">
         <h1>Seu quizz está pronto</h1>
 
-        <div class="button-proximo-form" onclick="">Acessar quizz</div>
+        <div class="quizz-create-quizz" onclick="playCreatedQuizz()">
+            <img src="${createdQuizz.image}">
+            <p>${createdQuizz.title}</p>
+        </div>
+
+        <div class="button-proximo-form" onclick="playCreatedQuizz()">Acessar quizz</div>
+        <div class="button-back-home" onclick="reloadPage()">Voltar para home</div>
     </div>
   `
 }
 
-showCreatePageFase3()
+function reloadPage() {
+    window.location.reload()
+}
+
+function playCreatedQuizz(){
+    clearMainTag();
+    main.innerHTML += templateTopScreenQuizzes(createdQuizz);
+    main.innerHTML += templateForQuestionsQuizz(createdQuizz);
+}
 
 function verifyLevelsInfo(){
     'level-text, percent-min, level-url, level-description'
@@ -142,6 +159,15 @@ function verifyLevelsInfo(){
     if(!level0 || !correctVerify){
         alert("Por favor, preencha os campos corretamente!")
     }else{
+        quizzLevels = levels;
+        let newQuizz = {
+            title: basicQuizzInfo.title,
+            image: basicQuizzInfo.imageUrl,
+            questions: quizzQuestions,
+            levels: quizzLevels
+        }
+        createdQuizz = newQuizz;
+        sendNewQuizz(newQuizz)
         showCreatePageFase4()
     }
     
@@ -166,6 +192,15 @@ function verifyUrl(string){
     return true;
 }
 
+function sendNewQuizz(quizz){
+    const baseURL = `https://mock-api.driven.com.br/api/v7/buzzquizz/quizzes`
+
+    const promise = axios.post(`${baseURL}`, quizz);
+    promise.catch((error) => {console.log(error)})
+    promise.then((res) => {console.log("sucesso", res)})
+    console.log(quizz);
+}
+
 function verifyBasicInfo(){
     const createPageElement = document.querySelector('.create-quizz-page');
 
@@ -185,7 +220,6 @@ function verifyBasicInfo(){
         showCreatePageFase2();
     }
 
-    console.log(elementsValue);
 }
 
 function verifyColor(color){
@@ -283,14 +317,17 @@ function verifyQuestionsInfo(){
     if(!correctVerify){
         alert("Por favor, verifique todos os campos!");
     }else{
+        quizzQuestions = questions;
         showCreatePageFase3();
     }
 }
+
 function playQuizz(position){
   clearMainTag();
-  console.log(quizzesOfServer[position]);
   main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
   main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
+  quizz = quizzesOfServer[position];
+  console.log(quizz.levels);
 }
 function comparador() { 
 	return Math.random() - 0.5; 
@@ -301,5 +338,43 @@ function shuffleAnswersOfEachQuestion(){
     for (let j = 0 ; j < quizzesOfServer[i].questions.length ; j++) {
       quizzesOfServer[i].questions[j].answers.sort(comparador);
     }
+  }
+}
+let pontuation = 0;
+let count = 0;
+function selectAnswer(e){
+  if (e.classList.contains('backGroundWhite') === false) {
+    const answer = e.parentNode;
+    const boxAnswers = answer.querySelectorAll('.box-answer');
+    for (let i = 0 ; i < boxAnswers.length ; i++) {
+        if (boxAnswers[i] !== e) {
+          boxAnswers[i].classList.add('backGroundWhite');
+        }
+        boxAnswers[i].classList.remove('textBlack');
+    }
+  }
+  verifyPontuationQuizz(e);
+  setTimeout( () => {
+    e.parentNode.parentNode.nextElementSibling.scrollIntoView();
+  }, 2000);
+}
+
+function verifyPontuationQuizz(e) {
+  const numberOfQuestions = document.querySelectorAll('.question').length;
+  count++;
+  if (e.classList.contains('correctAnswer')) {
+    pontuation++;
+  } if (count === numberOfQuestions) {
+    pontuation = Math.floor(pontuation/numberOfQuestions * 100);
+    console.log(pontuation);
+    if(quizz === ''){
+        main.innerHTML += ResultQuizz(createdQuizz);
+    }else{
+        main.innerHTML += ResultQuizz(quizz);
+    }
+    main.innerHTML += buttons();
+    setTimeout( () => {
+      document.querySelector('.result-Quizz').scrollIntoView();
+    }, 2000);
   }
 }

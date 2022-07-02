@@ -1,31 +1,57 @@
 function templateForQuestionsQuizz(e){
+  let option = e;
   let result = '';
-  for (let i = 0 ; i < e.questions.length ; i++) {
+  for (let i = 0 ; i < option.questions.length ; i++) {
     result += `
     <div class="question">
-      <div style="background-color: ${e.questions[i].color}">
-        <h2>${e.questions[i].title}</h2>
+      <div style="background-color: ${option.questions[i].color}">
+        <h2>${option.questions[i].title}</h2>
       </div>
       <div class="answers">`
-      for (let j = 0 ; j < e.questions[i].answers.length ; j++) {
-        if (j === e.questions[i].answers.length - 1) {
+      for (let j = 0 ; j < option.questions[i].answers.length ; j++) {
+        if (isCorrectAnswer(option , i, j) === true ) {
+          if (j === e.questions[i].answers.length - 1) {
+            result += `
+            <div onclick="selectAnswer(this)" class="box-answer correctAnswer textBlack">
+            <img src=${option.questions[i].answers[j].image}>
+            <p>${option.questions[i].answers[j].text}</p>
+          </div>
+          </div>
+        </div>`
+        } else {
           result += `
-          <div>
-          <img src=${e.questions[i].answers[j].image}>
-          <p>${e.questions[i].answers[j].text}</p>
-        </div>
-        </div>
-      </div>`
-      } else {
-        result += `
-        <div>
-          <img src=${e.questions[i].answers[j].image}>
-          <p>${e.questions[i].answers[j].text}</p>
-      </div>`
-      }
+          <div onclick="selectAnswer(this)" class="box-answer correctAnswer textBlack">
+            <img src=${option.questions[i].answers[j].image}>
+            <p>${option.questions[i].answers[j].text}</p>
+        </div>`
+        }
+        } else if (isCorrectAnswer(option , i, j) === false) {
+          if (j === e.questions[i].answers.length - 1) {
+            result += `
+            <div onclick="selectAnswer(this)" class="box-answer wrongAnswer textBlack">
+            <img src=${option.questions[i].answers[j].image}>
+            <p>${option.questions[i].answers[j].text}</p>
+          </div>
+          </div>
+        </div>`
+        } else {
+          result += `
+          <div onclick="selectAnswer(this)" class="box-answer wrongAnswer textBlack">
+            <img src=${option.questions[i].answers[j].image}>
+            <p>${option.questions[i].answers[j].text}</p>
+        </div>`
+        }
+        }
   } 
 }
   return result;
+}
+function isCorrectAnswer(e , i, j) {
+  if (e.questions[i].answers[j].isCorrectAnswer === true) {
+    return true;
+  } else if (e.questions[i].answers[j].isCorrectAnswer === false) {
+    return false;
+  }
 }
 function templateTopScreenQuizzes(e){
     return `<div class="img-quizz">
@@ -114,3 +140,37 @@ function templateCreateQuizzFase4(){
 //     </div>
 //   </div>
 // </div>`
+
+function ResultQuizz(e) {
+  let result;
+  for (let i = 0 ; i < e.levels.length ; i++) {
+    console.log(e.levels[i])
+    if ( pontuation <= e.levels[i].minValue) {
+      result = `
+      <div class="result-Quizz">
+        <h2>${pontuation}% de acerto: ${e.levels[i].title}</h2>
+        <div>
+          <img src=${e.levels[i].image}>
+          <p>${e.levels[i].text}</p>
+        </div>
+      </div>`;
+      return result;
+    } else if (i === e.levels.length - 1) {
+      return `
+      <div class="result-Quizz">
+        <h2>${pontuation}% de acerto: ${e.levels[e.levels.length-1].title}</h2>
+        <div>
+          <img src=${e.levels[e.levels.length-1].image}>
+          <p>${e.levels[e.levels.length-1].text}</p>
+        </div>
+      </div>`;
+    }
+  }
+}
+function buttons() {
+  return `
+  <div class="buttons">
+    <div class="restart-Quizz">Reiniciar Quizz</div>
+    <div class="back-to-home">Voltar pra Home</div>
+  </div>`
+}
