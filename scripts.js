@@ -33,10 +33,6 @@ function showQuizzesOnScreen(answer) {
 function isImage(url) {
   return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
 }
-
-function showScreenOfQuestions(){
-  let firstQuizz = quizzesOfServer[0];
-}
 function showCreatePage() {
     clearMainTag();
     main.innerHTML = `
@@ -251,7 +247,6 @@ function playQuizz(position){
   main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
   main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
   quizz = quizzesOfServer[position];
-  console.log(quizz.levels);
   document.querySelector('.img-quizz').scrollIntoView({block: 'center'});
 }
 function comparador() { 
@@ -297,5 +292,7 @@ function verifyPontuationQuizz(e) {
       document.querySelector('.result-Quizz').scrollIntoView({behavior: 'smooth'});
     }, 2000);
     quizz = undefined;
+    pontuation = 0;
+    count = 0;
   }
 }
