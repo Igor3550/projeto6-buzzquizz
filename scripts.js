@@ -3,11 +3,12 @@ let quizzesOfServer = [];
 let quizzesOfUser = [];
 let quizz = '';
 let quizzPosition = '';
+let personalQuizzPosition = '';
+let createdQuizz = '';
 
 let basicQuizzInfo;// {title, imageUrl, qntQuestions, qntLevels}
 let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
 let quizzLevels;//[{L1}, {L2}]
-let createdQuizz;
 let createdQuizzId;
 
 function clearMainTag(){
@@ -26,6 +27,7 @@ function loadQuizzes() {
     promise.catch((error)=>{console.log(error)})
     promise.then(showQuizzesOnScreen);
 }
+
 function showQuizzesOnScreen(answer) {
     let j = 0;
     let quizzes = document.querySelector('.quizzes');
@@ -109,12 +111,6 @@ function showCreatePageFase4() {
 
 function reloadPage() {
     window.location.reload()
-}
-
-function playCreatedQuizz(){
-    clearMainTag();
-    main.innerHTML += templateTopScreenQuizzes(createdQuizz);
-    main.innerHTML += templateForQuestionsQuizz(createdQuizz);
 }
 
 function verifyLevelsInfo(){
@@ -269,7 +265,7 @@ function verifyQuestionsInfo(){
         let incorrectText3 = questionElement.querySelector('.incorrect-resp3').value
         let incorrectUrl3 = questionElement.querySelector('.image-url3').value
 
-        //verifica se titulo é menor que 20 e se os campos obrigatorioss foram preenchidos corretamente
+        //verifica se titulo é menor que 20 e se os campos obrigatorios foram preenchidos corretamente
         if( textQuestion.length < 20 || colorQuestion === '' || correctText === '' || incorrectText1 === '' || !verifyUrl(correctUrl) || !verifyUrl(incorrectUrl1)){
             correctVerify = false;
         }
@@ -343,7 +339,6 @@ function playQuizz(position){
   main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
   main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
   quizz = quizzesOfServer[position];
-  document.querySelector('.img-quizz').scrollIntoView({block: 'center'});
 }
 function comparador() { 
 	return Math.random() - 0.5; 
@@ -372,7 +367,7 @@ function selectAnswer(e){
   verifyPontuationQuizz(e);
   setTimeout( () => {
     let nextElement = e.parentNode.parentNode.nextElementSibling;
-    nextElement.querySelector('h2').scrollIntoView({behavior: 'smooth', block: 'center'});
+    nextElement.scrollIntoView({behavior: 'smooth'});
   }, 2000);
 }
 
@@ -384,29 +379,32 @@ function verifyPontuationQuizz(e) {
   } if (count === numberOfQuestions) {
     pontuation = Math.floor(pontuation/numberOfQuestions * 100);
     console.log(pontuation);
-    if(quizz === ''){
+    if(createdQuizz !== ''){
         main.innerHTML += ResultQuizz(createdQuizz);
     }else{
         main.innerHTML += ResultQuizz(quizz);
     }
-    main.innerHTML += buttons();
     setTimeout( () => {
-      document.querySelector('.result-Quizz').scrollIntoView({behavior: 'smooth'});
-      document.querySelector('.result-Quizz').scrollIntoView({block: "center",behavior: "smooth"});
+        main.innerHTML += buttons();
+        document.querySelector('.result-Quizz').scrollIntoView({behavior: 'smooth'});
     }, 2000);
     quizz = undefined;
     pontuation = 0;
     count = 0;
   }
 }
+
 function storeQuizzOnBrowser(e , id){
-    let arrayOfIDs = [];
+    let arrayOfIDs = localStorage.getItem('arrayOfIDs');
+    arrayOfIDs = JSON.parse(arrayOfIDs);
     arrayOfIDs.push(id);
     localStorage.setItem('arrayOfIDs' , JSON.stringify(arrayOfIDs));
-    let arrayOfQuizzesUser = [];
+    let arrayOfQuizzesUser = localStorage.getItem('arrayOfQuizzesUser');
+    arrayOfQuizzesUser = JSON.parse(arrayOfQuizzesUser);
     arrayOfQuizzesUser.push(e);
     localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify(arrayOfQuizzesUser));
 }
+
 let box;
 showQuizzesofUser();
 function showQuizzesofUser(){
@@ -429,20 +427,28 @@ function showQuizzesofUser(){
     }
 }
 function playPersonalQuizz(position){
+    personalQuizzPosition = position;
     clearMainTag();
     main.innerHTML += templateTopScreenQuizzes(box[position].data);
     main.innerHTML += templateForQuestionsQuizz(box[position].data);
     quizz = box[position].data;
-    document.querySelector('.img-quizz').scrollIntoView({block: 'center'});
+}
+
+function playCreatedQuizz(){
+    clearMainTag();
+    main.innerHTML += templateTopScreenQuizzes(createdQuizz);
+    main.innerHTML += templateForQuestionsQuizz(createdQuizz);
 }
 
 function restartQuizz(){
     pontuation = 0;
     count = 0;
-    main.scrollIntoView({behavior: "smooth"})
-    if(quizz === ''){
+    document.querySelector('.img-quizz').scrollIntoView({behavior: 'smooth'});
+    if(createdQuizz !== ''){
         playCreatedQuizz(createdQuizz);
     }else if(quizzPosition !== ''){
         playQuizz(quizzPosition);
+    }else if(personalQuizzPosition !== ''){
+        playPersonalQuizz(personalQuizzPosition);
     }
 }
