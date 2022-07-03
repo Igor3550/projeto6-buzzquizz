@@ -12,6 +12,13 @@ let createdQuizzId;
 function clearMainTag(){
     main.innerHTML = '';
 }
+
+function showAnimatedCreatePage(){
+    setTimeout(()=>{
+        main.querySelector('.create-quizz-page').classList.add('show-display');
+    }, 200)
+}
+
 loadQuizzes();
 function loadQuizzes() {
     const promise = axios.get('https://mock-api.driven.com.br/api/v7/buzzquizz/quizzes');
@@ -48,11 +55,12 @@ function showScreenOfQuestions(){
 function showCreatePage() {
     clearMainTag();
     main.innerHTML = templateCreateQuizzFase1();
+    showAnimatedCreatePage()
 }
 
 function showCreatePageFase2() {
     main.innerHTML = `
-    <div class="create-quizz-page">
+    <div class="create-quizz-page to-right">
         <h1>Crie suas perguntas</h1>
 
         <div class="area-form"></div>
@@ -64,11 +72,12 @@ function showCreatePageFase2() {
     for(let i=0; i<basicQuizzInfo.qntQuestions; i++){
         form.innerHTML += templateCreateQuizzFase2(i+1)
     }
+    showAnimatedCreatePage()
 }
 
 function showCreatePageFase3(){
     main.innerHTML = `
-    <div class="create-quizz-page">
+    <div class="create-quizz-page to-right">
         <h1>Agora decida os níveis</h1>
 
         <div class="area-form"></div>
@@ -81,13 +90,14 @@ function showCreatePageFase3(){
     for(let i=0; i<basicQuizzInfo.qntLevels; i++){
         form.innerHTML += templateCreateQuizzFase3(i+1)
     }
+    showAnimatedCreatePage()
 }
 
 function showCreatePageFase4() {
     clearMainTag();
 
     main.innerHTML = `
-    <div class="create-quizz-page">
+    <div class="create-quizz-page to-right">
         <h1>Seu quizz está pronto</h1>
 
         <div class="quizz-create-quizz" onclick="playCreatedQuizz()">
@@ -99,6 +109,7 @@ function showCreatePageFase4() {
         <div class="button-back-home" onclick="reloadPage()">Voltar para home</div>
     </div>
   `
+  showAnimatedCreatePage();
 }
 
 function reloadPage() {

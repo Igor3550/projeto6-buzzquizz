@@ -62,7 +62,7 @@ function templateTopScreenQuizzes(e){
 
 function templateCreateQuizzFase1(){
   return `
-  <div class="create-quizz-page">
+  <div class="create-quizz-page to-top">
       <h1>Comece pelo começo</h1>
       <div class="form">
           <input class="quizz-title" type="text" placeholder="Título do seu quizz">
@@ -77,9 +77,9 @@ function templateCreateQuizzFase1(){
 
 function templateCreateQuizzFase2(question){
   return `
-  <div class="form question${question}">
+  <div class="form question${question}" >
   
-      <h2  onclick="showQuestionsForm(this)">Pergunta ${question} <ion-icon name="create-outline"></ion-icon></h2>
+      <h2 onclick="showQuestionsForm(this)" >Pergunta ${question} <ion-icon name="create-outline"></ion-icon></h2>
       <div class="question-display hide">
           <input class="question-text" type="text" placeholder="Texto da pergunta">
           <input class="background-question" type="text" placeholder="Cor de fundo da pergunta">
