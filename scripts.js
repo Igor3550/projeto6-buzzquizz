@@ -1,26 +1,35 @@
-const main = document.querySelector('main');
+const main = document.querySelector('main .scroll');
 let quizzesOfServer = [];
 let quizzesOfUser = [];
 let quizz = '';
+let quizzPosition = '';
 
 let basicQuizzInfo;// {title, imageUrl, qntQuestions, qntLevels}
 let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
 let quizzLevels;//[{L1}, {L2}]
 let createdQuizz;
+let createdQuizzId;
 
 function clearMainTag(){
     main.innerHTML = '';
 }
+
+function showAnimatedCreatePage(){
+    setTimeout(()=>{
+        main.querySelector('.create-quizz-page').classList.add('show-display');
+    }, 200)
+}
+
 loadQuizzes();
 function loadQuizzes() {
     const promise = axios.get('https://mock-api.driven.com.br/api/v7/buzzquizz/quizzes');
+    promise.catch((error)=>{console.log(error)})
     promise.then(showQuizzesOnScreen);
 }
 function showQuizzesOnScreen(answer) {
     let j = 0;
     let quizzes = document.querySelector('.quizzes');
     let data = answer.data;
-
     for (let i = 0 ; i < data.length ; i++) {
       if (isImage(data[i].image) === true) {
         quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${j})">
@@ -41,11 +50,12 @@ function isImage(url) {
 function showCreatePage() {
     clearMainTag();
     main.innerHTML = templateCreateQuizzFase1();
+    showAnimatedCreatePage()
 }
 
 function showCreatePageFase2() {
     main.innerHTML = `
-    <div class="create-quizz-page">
+    <div class="create-quizz-page to-right">
         <h1>Crie suas perguntas</h1>
 
         <div class="area-form"></div>
@@ -57,11 +67,12 @@ function showCreatePageFase2() {
     for(let i=0; i<basicQuizzInfo.qntQuestions; i++){
         form.innerHTML += templateCreateQuizzFase2(i+1)
     }
+    showAnimatedCreatePage()
 }
 
 function showCreatePageFase3(){
     main.innerHTML = `
-    <div class="create-quizz-page">
+    <div class="create-quizz-page to-right">
         <h1>Agora decida os níveis</h1>
 
         <div class="area-form"></div>
@@ -74,13 +85,14 @@ function showCreatePageFase3(){
     for(let i=0; i<basicQuizzInfo.qntLevels; i++){
         form.innerHTML += templateCreateQuizzFase3(i+1)
     }
+    showAnimatedCreatePage()
 }
 
 function showCreatePageFase4() {
     clearMainTag();
 
     main.innerHTML = `
-    <div class="create-quizz-page">
+    <div class="create-quizz-page to-right">
         <h1>Seu quizz está pronto</h1>
 
         <div class="quizz-create-quizz" onclick="playCreatedQuizz()">
@@ -92,6 +104,7 @@ function showCreatePageFase4() {
         <div class="button-back-home" onclick="reloadPage()">Voltar para home</div>
     </div>
   `
+  showAnimatedCreatePage();
 }
 
 function reloadPage() {
@@ -196,6 +209,10 @@ function sendNewQuizz(quizz){
     const promise = axios.post(`${baseURL}`, quizz);
     promise.catch((error) => {console.log(error)})
     promise.then((res) => {console.log("sucesso", storeQuizzOnBrowser(res , res.data.id) )})
+    promise.then((res) => {
+        console.log("sucesso", res)
+        createdQuizzId = res.data.id
+    })
     console.log(quizz);
 }
 
@@ -322,6 +339,7 @@ function verifyQuestionsInfo(){
 
 function playQuizz(position){
   clearMainTag();
+  quizzPosition = position;
   main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
   main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
   quizz = quizzesOfServer[position];
@@ -355,7 +373,6 @@ function selectAnswer(e){
   setTimeout( () => {
     let nextElement = e.parentNode.parentNode.nextElementSibling;
     nextElement.querySelector('h2').scrollIntoView({behavior: 'smooth', block: 'center'});
-    console.log();
   }, 2000);
 }
 
@@ -375,6 +392,7 @@ function verifyPontuationQuizz(e) {
     main.innerHTML += buttons();
     setTimeout( () => {
       document.querySelector('.result-Quizz').scrollIntoView({behavior: 'smooth'});
+      document.querySelector('.result-Quizz').scrollIntoView({block: "center",behavior: "smooth"});
     }, 2000);
     quizz = undefined;
     pontuation = 0;
@@ -411,10 +429,20 @@ function showQuizzesofUser(){
     }
 }
 function playPersonalQuizz(position){
-    console.log('ok');
     clearMainTag();
     main.innerHTML += templateTopScreenQuizzes(box[position].data);
     main.innerHTML += templateForQuestionsQuizz(box[position].data);
     quizz = box[position].data;
     document.querySelector('.img-quizz').scrollIntoView({block: 'center'});
+}
+
+function restartQuizz(){
+    pontuation = 0;
+    count = 0;
+    main.scrollIntoView({behavior: "smooth"})
+    if(quizz === ''){
+        playCreatedQuizz(createdQuizz);
+    }else if(quizzPosition !== ''){
+        playQuizz(quizzPosition);
+    }
 }

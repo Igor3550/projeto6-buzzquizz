@@ -62,7 +62,7 @@ function templateTopScreenQuizzes(e){
 
 function templateCreateQuizzFase1(){
   return `
-  <div class="create-quizz-page">
+  <div class="create-quizz-page to-top">
       <h1>Comece pelo começo</h1>
       <div class="form">
           <input class="quizz-title" type="text" placeholder="Título do seu quizz">
@@ -77,9 +77,9 @@ function templateCreateQuizzFase1(){
 
 function templateCreateQuizzFase2(question){
   return `
-  <div class="form question${question}">
+  <div class="form question${question}" >
   
-      <h2  onclick="showQuestionsForm(this)">Pergunta ${question} <ion-icon name="create-outline"></ion-icon></h2>
+      <h2 onclick="showQuestionsForm(this)" >Pergunta ${question} <ion-icon name="create-outline"></ion-icon></h2>
       <div class="question-display hide">
           <input class="question-text" type="text" placeholder="Texto da pergunta">
           <input class="background-question" type="text" placeholder="Cor de fundo da pergunta">
@@ -145,6 +145,7 @@ function ResultQuizz(e) {
   let result;
   for (let i = 0 ; i < e.levels.length ; i++) {
     console.log(e.levels[i])
+    console.log(pontuation)
     if ( pontuation <= e.levels[i].minValue) {
       result = `
       <div class="result-Quizz">
@@ -170,7 +171,7 @@ function ResultQuizz(e) {
 function buttons() {
   return `
   <div class="buttons">
-    <div class="restart-Quizz">Reiniciar Quizz</div>
-    <div class="back-to-home">Voltar pra Home</div>
+    <div class="restart-Quizz" onclick="restartQuizz()">Reiniciar Quizz</div>
+    <div class="back-to-home" onclick="reloadPage()">Voltar pra Home</div>
   </div>`
 }
