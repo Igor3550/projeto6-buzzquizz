@@ -85,7 +85,7 @@ function showCreatePageFase3(){
     </div>
     `
 
-    const form = main.querySelector('.area-form')
+    const form = main.querySelector('.area-form');
 
     for(let i=0; i<basicQuizzInfo.qntLevels; i++){
         form.innerHTML += templateCreateQuizzFase3(i+1)
