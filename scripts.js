@@ -1,4 +1,4 @@
-const main = document.querySelector('main');
+const main = document.querySelector('main .scroll');
 let quizzesOfServer = [];
 let quizz = '';
 let quizzPosition = '';
@@ -15,11 +15,14 @@ function clearMainTag(){
 loadQuizzes();
 function loadQuizzes() {
     const promise = axios.get('https://mock-api.driven.com.br/api/v7/buzzquizz/quizzes');
+    promise.catch((error)=>{console.log(error)})
     promise.then(showQuizzesOnScreen);
 }
 function showQuizzesOnScreen(answer) {
     let quizzes = document.querySelector('.quizzes');
     let data = answer.data;
+
+    quizzesOfServer = data
 
     for (let i = 0 ; i < data.length ; i++) {
       if (isImage(data[i].image) === true) {
@@ -29,7 +32,7 @@ function showQuizzesOnScreen(answer) {
           <p>${data[i].title}</p>
         </div>
       </div>`
-      quizzesOfServer.push(data[i]);
+      //quizzesOfServer.push(data[i]);
       }
     }
     shuffleAnswersOfEachQuestion();
@@ -361,7 +364,7 @@ function selectAnswer(e){
   }
   verifyPontuationQuizz(e);
   setTimeout( () => {
-    e.parentNode.parentNode.nextElementSibling.scrollIntoView({behavior: "smooth"});
+    e.parentNode.parentNode.nextElementSibling.scrollIntoView({block: "center",behavior: "smooth"});
   }, 2000);
 }
 
@@ -380,7 +383,7 @@ function verifyPontuationQuizz(e) {
     }
     main.innerHTML += buttons();
     setTimeout( () => {
-      document.querySelector('.result-Quizz').scrollIntoView({behavior: "smooth"});
+      document.querySelector('.result-Quizz').scrollIntoView({block: "center",behavior: "smooth"});
     }, 2000);
   }
 }
