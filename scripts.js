@@ -1,8 +1,12 @@
 const main = document.querySelector('main');
 let quizzesOfServer = [];
+let quizzesOfUser = [];
+let quizz = '';
 
-let basicQuizzInfo; // {title, imageUrl, qntQuestions, qntLevels}
+let basicQuizzInfo;// {title, imageUrl, qntQuestions, qntLevels}
 let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
+let quizzLevels;//[{L1}, {L2}]
+let createdQuizz;
 
 function clearMainTag(){
     main.innerHTML = '';
@@ -16,6 +20,7 @@ function showQuizzesOnScreen(answer) {
     let j = 0;
     let quizzes = document.querySelector('.quizzes');
     let data = answer.data;
+
     for (let i = 0 ; i < data.length ; i++) {
       if (isImage(data[i].image) === true) {
         quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${j})">
@@ -35,18 +40,7 @@ function isImage(url) {
 }
 function showCreatePage() {
     clearMainTag();
-    main.innerHTML = `
-    <div class="create-quizz-page">
-        <h1>Comece pelo começo</h1>
-        <div class="form">
-            <input class="quizz-title" type="text" placeholder="Título do seu quizz">
-            <input class="image-url" type="text" placeholder="URL da imagem do seu quizz">
-            <input class="qnt-questions" type="number" placeholder="Quantidade de perguntas do quizz">
-            <input class="qnt-levels" type="number" placeholder="Quantidade de níveis do quizz">
-        </div>
-        <div class="button-proximo-form" onclick="verifyBasicInfo()">Prosseguir para criar perguntas</div>
-    </div>
-    `
+    main.innerHTML = templateCreateQuizzFase1();
 }
 
 function showCreatePageFase2() {
@@ -61,33 +55,7 @@ function showCreatePageFase2() {
     const form = main.querySelector('.area-form')
 
     for(let i=0; i<basicQuizzInfo.qntQuestions; i++){
-        form.innerHTML += `
-        <div class="form question${i+1}">
-        
-            <h2  onclick="showQuestionsForm(this)">Pergunta ${i+1} <ion-icon name="create-outline"></ion-icon></h2>
-            <div class="question-display hide">
-                <input class="question-text" type="text" placeholder="Texto da pergunta">
-                <input class="background-question" type="text" placeholder="Cor de fundo da pergunta">
-                <h2>Resposta correta</h2>
-                <input class="correct-resp" type="text" placeholder="Resposta correta">
-                <input class="image-url" type="text" placeholder="URL da imagem">
-                <h2>Respostas incorretas</h2>
-                <div class="incorrect-resp">
-                    <input class="incorrect-resp1" type="text" placeholder="Resposta incorreta 1">
-                    <input class="image-url1" type="text" placeholder="URL da imagem 1">
-                </div>
-                <div class="incorrect-resp">
-                    <input class="incorrect-resp2" type="text" placeholder="Resposta incorreta 2">
-                    <input class="image-url2" type="text" placeholder="URL da imagem 2">   
-                </div>
-                <div class="incorrect-resp">
-                    <input class="incorrect-resp3" type="text" placeholder="Resposta incorreta 3">
-                    <input class="image-url3" type="text" placeholder="URL da imagem 3">
-                </div>
-            </div>
-        </div>
-
-        `
+        form.innerHTML += templateCreateQuizzFase2(i+1)
     }
 }
 
@@ -97,9 +65,110 @@ function showCreatePageFase3(){
         <h1>Agora decida os níveis</h1>
 
         <div class="area-form"></div>
-        <div class="button-proximo-form" onclick="">Finalizar quizz</div>
+        <div class="button-proximo-form" onclick="verifyLevelsInfo()">Finalizar quizz</div>
     </div>
     `
+
+    const form = main.querySelector('.area-form')
+
+    for(let i=0; i<basicQuizzInfo.qntLevels; i++){
+        form.innerHTML += templateCreateQuizzFase3(i+1)
+    }
+}
+
+function showCreatePageFase4() {
+    clearMainTag();
+
+    main.innerHTML = `
+    <div class="create-quizz-page">
+        <h1>Seu quizz está pronto</h1>
+
+        <div class="quizz-create-quizz" onclick="playCreatedQuizz()">
+            <img src="${createdQuizz.image}">
+            <p>${createdQuizz.title}</p>
+        </div>
+
+        <div class="button-proximo-form" onclick="playCreatedQuizz()">Acessar quizz</div>
+        <div class="button-back-home" onclick="reloadPage()">Voltar para home</div>
+    </div>
+  `
+}
+
+function reloadPage() {
+    window.location.reload()
+}
+
+function playCreatedQuizz(){
+    clearMainTag();
+    main.innerHTML += templateTopScreenQuizzes(createdQuizz);
+    main.innerHTML += templateForQuestionsQuizz(createdQuizz);
+}
+
+function verifyLevelsInfo(){
+    'level-text, percent-min, level-url, level-description'
+
+    const levelsList = main.querySelectorAll('.form');
+
+    let levels = []
+
+    let correctVerify = true
+
+    for(let i=0; i<levelsList.length; i++){
+        let level = levelsList[i]
+
+        let levelTitle = level.querySelector('.level-text').value;
+        let levelPercent = level.querySelector('.percent-min').value;
+        let levelUrlImg = level.querySelector('.level-url').value;
+        let levelDescription = level.querySelector('.level-description').value;
+        levelPercent = Number(levelPercent)
+
+        if ( levelPercent >= 0 ) {
+            if (levelPercent > 100 ) {
+                correctVerify = false
+            }
+        }else{
+            correctVerify = false
+        }
+
+        if( levelTitle.length < 10 || !verifyUrl(levelUrlImg) || levelDescription.length < 30){
+            correctVerify = false;  
+        }
+
+        if(correctVerify) {
+            let levelObject = {
+                title: levelTitle,
+                image: levelUrlImg,
+                text: levelDescription,
+                minValue: levelPercent
+            }
+
+            levels.push(levelObject);
+        }
+    }
+
+    let level0 = false;
+    levels.map(level => {
+        let min = level.minValue;
+
+        if(min === 0){
+            level0 = true;
+        }
+    })
+    if(!level0 || !correctVerify){
+        alert("Por favor, preencha os campos corretamente!")
+    }else{
+        quizzLevels = levels;
+        let newQuizz = {
+            title: basicQuizzInfo.title,
+            image: basicQuizzInfo.imageUrl,
+            questions: quizzQuestions,
+            levels: quizzLevels
+        }
+        createdQuizz = newQuizz;
+        sendNewQuizz(newQuizz)
+        showCreatePageFase4()
+    }
+    
 }
 
 function showQuestionsForm(element) {
@@ -121,6 +190,15 @@ function verifyUrl(string){
     return true;
 }
 
+function sendNewQuizz(quizz){
+    const baseURL = `https://mock-api.driven.com.br/api/v7/buzzquizz/quizzes`
+
+    const promise = axios.post(`${baseURL}`, quizz);
+    promise.catch((error) => {console.log(error)})
+    promise.then((res) => {console.log("sucesso", storeQuizzOnBrowser(res , res.data.id) )})
+    console.log(quizz);
+}
+
 function verifyBasicInfo(){
     const createPageElement = document.querySelector('.create-quizz-page');
 
@@ -140,7 +218,6 @@ function verifyBasicInfo(){
         showCreatePageFase2();
     }
 
-    console.log(elementsValue);
 }
 
 function verifyColor(color){
@@ -238,10 +315,11 @@ function verifyQuestionsInfo(){
     if(!correctVerify){
         alert("Por favor, verifique todos os campos!");
     }else{
+        quizzQuestions = questions;
         showCreatePageFase3();
     }
 }
-let quizz;
+
 function playQuizz(position){
   clearMainTag();
   main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
@@ -275,9 +353,12 @@ function selectAnswer(e){
   }
   verifyPontuationQuizz(e);
   setTimeout( () => {
-    e.parentNode.parentNode.nextElementSibling.scrollIntoView({behavior: 'smooth', block: 'center'});
+    let nextElement = e.parentNode.parentNode.nextElementSibling;
+    nextElement.querySelector('h2').scrollIntoView({behavior: 'smooth', block: 'center'});
+    console.log();
   }, 2000);
 }
+
 function verifyPontuationQuizz(e) {
   const numberOfQuestions = document.querySelectorAll('.question').length;
   count++;
@@ -286,7 +367,11 @@ function verifyPontuationQuizz(e) {
   } if (count === numberOfQuestions) {
     pontuation = Math.floor(pontuation/numberOfQuestions * 100);
     console.log(pontuation);
-    main.innerHTML += ResultQuizz(quizz);
+    if(quizz === ''){
+        main.innerHTML += ResultQuizz(createdQuizz);
+    }else{
+        main.innerHTML += ResultQuizz(quizz);
+    }
     main.innerHTML += buttons();
     setTimeout( () => {
       document.querySelector('.result-Quizz').scrollIntoView({behavior: 'smooth'});
@@ -295,4 +380,41 @@ function verifyPontuationQuizz(e) {
     pontuation = 0;
     count = 0;
   }
+}
+function storeQuizzOnBrowser(e , id){
+    let arrayOfIDs = [];
+    arrayOfIDs.push(id);
+    localStorage.setItem('arrayOfIDs' , JSON.stringify(arrayOfIDs));
+    let arrayOfQuizzesUser = [];
+    arrayOfQuizzesUser.push(e);
+    localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify(arrayOfQuizzesUser));
+}
+let box;
+showQuizzesofUser();
+function showQuizzesofUser(){
+    box = localStorage.getItem('arrayOfQuizzesUser');
+    box = JSON.parse(box);
+    if (box.length !== 0) {
+        const myQuizzes = document.querySelector('.my-quizzes');
+        const createQuizz = document.querySelector('.create-quizz');
+        const yourQuizzes = document.querySelector('.your-quizzes');
+        yourQuizzes.classList.remove('hide');
+        createQuizz.classList.add('hide');
+        for (let i = 0 ; i < box.length ; i++) {
+            myQuizzes.innerHTML += `<div class="quizz" onclick="playPersonalQuizz(${i})">
+            <img src=${box[i].data.image}>
+            <div class="title">
+              <p>${box[i].data.title}</p>
+            </div>
+          </div>`
+        }
+    }
+}
+function playPersonalQuizz(position){
+    console.log('ok');
+    clearMainTag();
+    main.innerHTML += templateTopScreenQuizzes(box[position].data);
+    main.innerHTML += templateForQuestionsQuizz(box[position].data);
+    quizz = box[position].data;
+    document.querySelector('.img-quizz').scrollIntoView({block: 'center'});
 }
