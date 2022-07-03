@@ -85,7 +85,8 @@ main{
     cursor: pointer;
     width: 340px;
     margin: 5px;
-    background: linear-gradient(to top ,rgba(0,0,0) , rgba(0,0,0,0))
+    background: linear-gradient(to top ,rgba(0,0,0) , rgba(0,0,0,0));
+    word-break: break-all;
 }
 .quizz img{
     height: 181px;
@@ -150,6 +151,7 @@ main{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    word-break: break-all;
     position: sticky;
 }
 .answers div{
@@ -159,8 +161,8 @@ main{
     margin-bottom: 20px;
 }
 .answers img{
+    max-height: 220px;
     width: 100%;
-    height: 88%;
     position: relative;
     z-index: -1;
 }
@@ -322,6 +324,11 @@ main{
 .result-Quizz{
     margin: 100px auto;
     width: 769px;
+    word-break: break-all;
+}
+.result-Quizz h2{
+    width: 100%;
+    min-height: 50px;
     padding: 10px;
     background-color: white;
     box-shadow: 0 0 5px rgb(0, 0, 0, 0.1);
@@ -394,9 +401,6 @@ main{
     margin: 70px auto 0 auto;
 }
 @media (max-width: 1100px) {
-    main{
-        width: 100%
-    }
     .every-quizzes-title{
         margin: 35px auto 14px auto;
         width: 340px;
@@ -457,6 +461,9 @@ main{
     }
 }
 @media (max-width: 360px) {
+    .img-quizz p{
+        font-size: 18px;
+    }
     .quizz{
         width: 100%;
     }

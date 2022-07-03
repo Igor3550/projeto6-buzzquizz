@@ -1,5 +1,6 @@
 const main = document.querySelector('main .scroll');
 let quizzesOfServer = [];
+let quizzesOfUser = [];
 let quizz = '';
 let quizzPosition = '';
 
@@ -26,20 +27,19 @@ function loadQuizzes() {
     promise.then(showQuizzesOnScreen);
 }
 function showQuizzesOnScreen(answer) {
+    let j = 0;
     let quizzes = document.querySelector('.quizzes');
     let data = answer.data;
-
-    quizzesOfServer = data
-
     for (let i = 0 ; i < data.length ; i++) {
       if (isImage(data[i].image) === true) {
-        quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${i})">
+        quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${j})">
         <img src=${data[i].image}>
         <div class="title">
           <p>${data[i].title}</p>
         </div>
       </div>`
-      //quizzesOfServer.push(data[i]);
+      j++;
+      quizzesOfServer.push(data[i]);
       }
     }
     shuffleAnswersOfEachQuestion();
@@ -47,11 +47,6 @@ function showQuizzesOnScreen(answer) {
 function isImage(url) {
   return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
 }
-
-function showScreenOfQuestions(){
-  let firstQuizz = quizzesOfServer[0];
-}
-
 function showCreatePage() {
     clearMainTag();
     main.innerHTML = templateCreateQuizzFase1();
@@ -213,6 +208,7 @@ function sendNewQuizz(quizz){
 
     const promise = axios.post(`${baseURL}`, quizz);
     promise.catch((error) => {console.log(error)})
+    promise.then((res) => {console.log("sucesso", storeQuizzOnBrowser(res , res.data.id) )})
     promise.then((res) => {
         console.log("sucesso", res)
         createdQuizzId = res.data.id
@@ -347,7 +343,7 @@ function playQuizz(position){
   main.innerHTML += templateTopScreenQuizzes(quizzesOfServer[position]);
   main.innerHTML += templateForQuestionsQuizz(quizzesOfServer[position]);
   quizz = quizzesOfServer[position];
-  console.log(quizz.levels);
+  document.querySelector('.img-quizz').scrollIntoView({block: 'center'});
 }
 function comparador() { 
 	return Math.random() - 0.5; 
@@ -375,7 +371,8 @@ function selectAnswer(e){
   }
   verifyPontuationQuizz(e);
   setTimeout( () => {
-    e.parentNode.parentNode.nextElementSibling.scrollIntoView({block: "center",behavior: "smooth"});
+    let nextElement = e.parentNode.parentNode.nextElementSibling;
+    nextElement.querySelector('h2').scrollIntoView({behavior: 'smooth', block: 'center'});
   }, 2000);
 }
 
@@ -394,9 +391,49 @@ function verifyPontuationQuizz(e) {
     }
     main.innerHTML += buttons();
     setTimeout( () => {
+      document.querySelector('.result-Quizz').scrollIntoView({behavior: 'smooth'});
       document.querySelector('.result-Quizz').scrollIntoView({block: "center",behavior: "smooth"});
     }, 2000);
+    quizz = undefined;
+    pontuation = 0;
+    count = 0;
   }
+}
+function storeQuizzOnBrowser(e , id){
+    let arrayOfIDs = [];
+    arrayOfIDs.push(id);
+    localStorage.setItem('arrayOfIDs' , JSON.stringify(arrayOfIDs));
+    let arrayOfQuizzesUser = [];
+    arrayOfQuizzesUser.push(e);
+    localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify(arrayOfQuizzesUser));
+}
+let box;
+showQuizzesofUser();
+function showQuizzesofUser(){
+    box = localStorage.getItem('arrayOfQuizzesUser');
+    box = JSON.parse(box);
+    if (box.length !== 0) {
+        const myQuizzes = document.querySelector('.my-quizzes');
+        const createQuizz = document.querySelector('.create-quizz');
+        const yourQuizzes = document.querySelector('.your-quizzes');
+        yourQuizzes.classList.remove('hide');
+        createQuizz.classList.add('hide');
+        for (let i = 0 ; i < box.length ; i++) {
+            myQuizzes.innerHTML += `<div class="quizz" onclick="playPersonalQuizz(${i})">
+            <img src=${box[i].data.image}>
+            <div class="title">
+              <p>${box[i].data.title}</p>
+            </div>
+          </div>`
+        }
+    }
+}
+function playPersonalQuizz(position){
+    clearMainTag();
+    main.innerHTML += templateTopScreenQuizzes(box[position].data);
+    main.innerHTML += templateForQuestionsQuizz(box[position].data);
+    quizz = box[position].data;
+    document.querySelector('.img-quizz').scrollIntoView({block: 'center'});
 }
 
 function restartQuizz(){
