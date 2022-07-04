@@ -33,7 +33,7 @@ function showQuizzesOnScreen(answer) {
     let quizzes = document.querySelector('.quizzes');
     let data = answer.data;
     for (let i = 0 ; i < data.length ; i++) {
-      if (verifyUrl(data[i].image) === true) {
+      if (verifyUrl(data[i].image) === true && verifyIdOfQuizz(data[i]) === false) {
         quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${j})">
         <img src=${data[i].image}>
         <div class="title">
@@ -459,4 +459,14 @@ function restartQuizz(){
     }else if(personalQuizzPosition !== ''){
         playPersonalQuizz(personalQuizzPosition);
     }
+}
+function verifyIdOfQuizz(e) {
+    let container = localStorage.getItem('arrayOfIDs');
+    container = JSON.parse(container);
+    for (let i = 0 ; i < container.length ; i++) {
+        if (e.id === container[i]) {
+            return true;
+        }
+    }
+    return false;
 }
