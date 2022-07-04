@@ -11,6 +11,17 @@ let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
 let quizzLevels;//[{L1}, {L2}]
 let createdQuizzId;
 
+//verifica se ja existe as variaveis no localStorage
+let arrayOfIDs = localStorage.getItem('arrayOfIds');
+let arrayOfQuizzesUser =localStorage.getItem('arrayOfQuizzesUser');
+
+if(arrayOfIDs === null){
+    localStorage.setItem('arrayOfIDs' , JSON.stringify([]));
+}
+if(arrayOfQuizzesUser === null){
+    localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify([]));
+}
+
 function clearMainTag(){
     main.innerHTML = '';
 }
@@ -395,18 +406,12 @@ function verifyPontuationQuizz(e) {
 }
 
 function storeQuizzOnBrowser(e , id){
-    let arrayOfIDs = localStorage.getItem('arrayOfIDs');
-    if(arrayOfIDs === null || arrayOfIDs === undefined){
-        localStorage.setItem('arrayOfIDs' , JSON.stringify([]));
-    }
+    arrayOfIDs = localStorage.getItem('arrayOfIDs');
     arrayOfIDs = JSON.parse(arrayOfIDs);
     arrayOfIDs.push(id);
     localStorage.setItem('arrayOfIDs' , JSON.stringify(arrayOfIDs));
 
-    let arrayOfQuizzesUser = localStorage.getItem('arrayOfQuizzesUser');
-    if(arrayOfQuizzesUser === null || arrayOfQuizzesUser === undefined){
-        localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify([]));
-    }
+    arrayOfQuizzesUser = localStorage.getItem('arrayOfQuizzesUser');
     arrayOfQuizzesUser = JSON.parse(arrayOfQuizzesUser);
     arrayOfQuizzesUser.push(e);
     localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify(arrayOfQuizzesUser));
