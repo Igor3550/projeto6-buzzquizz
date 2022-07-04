@@ -123,11 +123,6 @@ function templateCreateQuizzFase3(level){
       `
 }
 
-function templateCreateQuizzFase4(){
-  return `
-    
-  `
-}
 // Template das questões do Quizz` 
 // <div class="question">
 //   <div>
