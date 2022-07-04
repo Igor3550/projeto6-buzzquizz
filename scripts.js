@@ -11,15 +11,20 @@ let quizzQuestions; // [{Q1}, {Q2}, {Q3}]
 let quizzLevels;//[{L1}, {L2}]
 let createdQuizzId;
 
-//verifica se ja existe as variaveis no localStorage
-let arrayOfIDs = localStorage.getItem('arrayOfIds');
-let arrayOfQuizzesUser =localStorage.getItem('arrayOfQuizzesUser');
+let arrayOfIDs;
+let arrayOfQuizzesUser;
 
-if(arrayOfIDs === null){
+//verifica se ja existe as variaveis no localStorage
+if(localStorage.getItem('arrayOfIDs') === null){
     localStorage.setItem('arrayOfIDs' , JSON.stringify([]));
+    arrayOfIDs = localStorage.getItem('arrayOfIds');
+}else{
+    arrayOfIDs = localStorage.getItem('arrayOfIds');
 }
-if(arrayOfQuizzesUser === null){
+
+if(localStorage.getItem('arrayOfQuizzesUser') === null){
     localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify([]));
+    arrayOfQuizzesUser = localStorage.getItem('arrayOfQuizzesUser');
 }
 
 function clearMainTag(){
@@ -215,10 +220,10 @@ function sendNewQuizz(quizz){
 
     const promise = axios.post(`${baseURL}`, quizz);
     promise.catch((error) => {console.log(error)})
-    promise.then((res) => {console.log("sucesso", storeQuizzOnBrowser(res , res.data.id) )})
     promise.then((res) => {
         console.log("sucesso", res)
-        createdQuizzId = res.data.id
+        createdQuizzId = res.data.id;
+        storeQuizzOnBrowser(res, res.data.id);
     })
     console.log(quizz);
 }
