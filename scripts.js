@@ -17,13 +17,15 @@ let arrayOfQuizzesUser;
 //verifica se ja existe as variaveis no localStorage
 if(localStorage.getItem('arrayOfIDs') === null){
     localStorage.setItem('arrayOfIDs' , JSON.stringify([]));
-    arrayOfIDs = localStorage.getItem('arrayOfIds');
+    arrayOfIDs = localStorage.getItem('arrayOfIDs');
 }else{
-    arrayOfIDs = localStorage.getItem('arrayOfIds');
+    arrayOfIDs = localStorage.getItem('arrayOfIDs');
 }
 
 if(localStorage.getItem('arrayOfQuizzesUser') === null){
     localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify([]));
+    arrayOfQuizzesUser = localStorage.getItem('arrayOfQuizzesUser');
+}else{
     arrayOfQuizzesUser = localStorage.getItem('arrayOfQuizzesUser');
 }
 
