@@ -33,7 +33,7 @@ function showQuizzesOnScreen(answer) {
     let quizzes = document.querySelector('.quizzes');
     let data = answer.data;
     for (let i = 0 ; i < data.length ; i++) {
-      if (isImage(data[i].image) === true) {
+      if (verifyUrl(data[i].image) === true) {
         quizzes.innerHTML += `<div class="quizz" onclick="playQuizz(${j})">
         <img src=${data[i].image}>
         <div class="title">
