@@ -396,10 +396,17 @@ function verifyPontuationQuizz(e) {
 
 function storeQuizzOnBrowser(e , id){
     let arrayOfIDs = localStorage.getItem('arrayOfIDs');
+    if(arrayOfIDs === null || arrayOfIDs === undefined){
+        localStorage.setItem('arrayOfIDs' , JSON.stringify([]));
+    }
     arrayOfIDs = JSON.parse(arrayOfIDs);
     arrayOfIDs.push(id);
     localStorage.setItem('arrayOfIDs' , JSON.stringify(arrayOfIDs));
+
     let arrayOfQuizzesUser = localStorage.getItem('arrayOfQuizzesUser');
+    if(arrayOfQuizzesUser === null || arrayOfQuizzesUser === undefined){
+        localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify([]));
+    }
     arrayOfQuizzesUser = JSON.parse(arrayOfQuizzesUser);
     arrayOfQuizzesUser.push(e);
     localStorage.setItem('arrayOfQuizzesUser' , JSON.stringify(arrayOfQuizzesUser));
@@ -410,6 +417,7 @@ showQuizzesofUser();
 function showQuizzesofUser(){
     box = localStorage.getItem('arrayOfQuizzesUser');
     box = JSON.parse(box);
+
     if (box.length !== 0) {
         const myQuizzes = document.querySelector('.my-quizzes');
         const createQuizz = document.querySelector('.create-quizz');
